@@ -22,6 +22,17 @@ interface FilterBarProps {
   resultCount: number;
 }
 
+const inputSx = {
+  "& .MuiOutlinedInput-root": {
+    bgcolor: "#0d1117",
+    "& fieldset": { borderColor: "#30363d" },
+    "&:hover fieldset": { borderColor: "#58a6ff55" },
+    "&.Mui-focused fieldset": { borderColor: "#58a6ff" },
+  },
+  "& .MuiInputBase-input": { color: "#e6edf3", fontSize: "0.85rem" },
+  "& .MuiInputBase-input::placeholder": { color: "#484f58" },
+};
+
 export default function FilterBar({
   search,
   onSearchChange,
@@ -33,7 +44,18 @@ export default function FilterBar({
   resultCount,
 }: FilterBarProps) {
   return (
-    <Box sx={{ px: { xs: 2, sm: 3 }, py: 2, display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, alignItems: { sm: "center" } }}>
+    <Box
+      sx={{
+        maxWidth: 1400,
+        mx: "auto",
+        px: { xs: 2, sm: 3 },
+        py: 2,
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        gap: 1.5,
+        alignItems: { sm: "center" },
+      }}
+    >
       <TextField
         size="small"
         placeholder="Search questions..."
@@ -43,12 +65,12 @@ export default function FilterBar({
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon fontSize="small" />
+                <SearchIcon sx={{ color: "#484f58", fontSize: 18 }} />
               </InputAdornment>
             ),
           },
         }}
-        sx={{ flex: 1, minWidth: 200 }}
+        sx={{ flex: 1, minWidth: 200, ...inputSx }}
       />
 
       <Autocomplete
@@ -57,10 +79,13 @@ export default function FilterBar({
         value={company || null}
         onChange={(_, v) => onCompanyChange(v || "")}
         renderInput={(params) => (
-          <TextField {...params} placeholder="All Companies" />
+          <TextField {...params} placeholder="All Companies" sx={inputSx} />
         )}
         sx={{ minWidth: 220 }}
         clearOnEscape
+        slotProps={{
+          paper: { sx: { bgcolor: "#161b22", border: "1px solid #30363d" } },
+        }}
       />
 
       <ToggleButtonGroup
@@ -70,14 +95,28 @@ export default function FilterBar({
         onChange={(_, v) => {
           if (v !== null) onDifficultyChange(v === "All" ? "" : v);
         }}
+        sx={{
+          "& .MuiToggleButton-root": {
+            color: "#8b949e",
+            borderColor: "#30363d",
+            fontSize: "0.8rem",
+            px: 1.5,
+            "&.Mui-selected": {
+              bgcolor: "#21262d",
+              color: "#58a6ff",
+              "&:hover": { bgcolor: "#30363d" },
+            },
+            "&:hover": { bgcolor: "#161b22" },
+          },
+        }}
       >
         <ToggleButton value="All">All</ToggleButton>
-        <ToggleButton value="Easy" sx={{ color: "success.main", "&.Mui-selected": { color: "success.main" } }}>Easy</ToggleButton>
-        <ToggleButton value="Medium" sx={{ color: "warning.main", "&.Mui-selected": { color: "warning.main" } }}>Medium</ToggleButton>
-        <ToggleButton value="Hard" sx={{ color: "error.main", "&.Mui-selected": { color: "error.main" } }}>Hard</ToggleButton>
+        <ToggleButton value="Easy" sx={{ "&.Mui-selected": { color: "#3fb950 !important" } }}>Easy</ToggleButton>
+        <ToggleButton value="Medium" sx={{ "&.Mui-selected": { color: "#d29922 !important" } }}>Medium</ToggleButton>
+        <ToggleButton value="Hard" sx={{ "&.Mui-selected": { color: "#f85149 !important" } }}>Hard</ToggleButton>
       </ToggleButtonGroup>
 
-      <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
+      <Typography variant="caption" sx={{ color: "#484f58", whiteSpace: "nowrap" }}>
         {resultCount.toLocaleString()} results
       </Typography>
     </Box>

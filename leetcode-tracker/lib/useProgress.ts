@@ -17,7 +17,10 @@ export interface ProgressMap {
   [questionId: number]: Status;
 }
 
-export function useProgress(user: User | null) {
+export function useProgress(
+  user: User | null,
+  onStatusChange?: (questionId: number, oldStatus: Status, newStatus: Status) => void
+) {
   const [progress, setProgress] = useState<ProgressMap>({});
   const [loading, setLoading] = useState(false);
 
@@ -50,11 +53,16 @@ export function useProgress(user: User | null) {
       const db = getFirebaseDb();
       if (!db) return;
 
+      const oldStatus = progress[questionId] || "";
       setProgress((prev) => ({ ...prev, [questionId]: status }));
       const ref = doc(db, "users", user.uid, "progress", String(questionId));
       await setDoc(ref, { status, updatedAt: serverTimestamp() });
+
+      if (onStatusChange) {
+        onStatusChange(questionId, oldStatus, status);
+      }
     },
-    [user]
+    [user, progress, onStatusChange]
   );
 
   return { progress, loading, updateStatus };
